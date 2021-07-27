@@ -137,9 +137,9 @@ rangeData <- function(numCols = 3) {
             if ( identical(strsplit(strsplit(elt,split = "/")[[1]][length.path+2]," ")[[1]][1], "ESSAI")) {
               pathDir.files = list.files(path = elt,pattern="*_Trial.csv")
               data.in.file = read.table(paste0(elt,"/",pathDir.files),header=FALSE,
-                                        sep = ";",
+                                        sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
-                                        col.names = paste0("V",seq_len(50)),fill = TRUE,)
+                                        col.names = paste0("V",seq_len(50)),fill = TRUE)
 
               writeData(wb, 1, data.in.file, colNames = FALSE, startCol = startCol.20_TUG)
               startCol.20_TUG = startCol.20_TUG + 9
@@ -151,7 +151,7 @@ rangeData <- function(numCols = 3) {
                 if (length(strsplit(dir,split = "/")[[1]]) == length.path+3) {
                   pathDir.files = list.files(path = dir,pattern="*_Trial.csv")
                   data.in.file = read.table(paste0(dir,"/",pathDir.files),header=FALSE,
-                                            sep = ";",
+                                            sep = ";",quote = "\"",
                                             na.strings =" ", stringsAsFactors= F,
                                             col.names = paste0("V",seq_len(50)),fill = TRUE)
                   writeData(wb, 2, data.in.file, colNames = FALSE, startCol = startCol.metrics_20_TUG)
@@ -168,7 +168,7 @@ rangeData <- function(numCols = 3) {
             pathDir = paste0(global$datapath,"/",paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
             pathDir.files = list.files(path = pathDir,pattern="*_Trial.csv")
             data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                      sep = ";",
+                                      sep = ";",quote = "\"",
                                       na.strings =" ", stringsAsFactors= F,
                                       col.names = paste0("V",seq_len(50)),fill = TRUE)
 
@@ -191,7 +191,7 @@ rangeData <- function(numCols = 3) {
             # PS
             if(identical(strsplit(pathDir,"/")[[1]][length.path+2],"PS")){
               data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                        sep = ";",
+                                        sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
                                         col.names = paste0("V",seq_len(50)),fill = TRUE)
 
@@ -210,7 +210,7 @@ rangeData <- function(numCols = 3) {
               if(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline")){
 
                 data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                          sep = ";",
+                                          sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
                                           col.names = paste0("V",seq_len(50)),fill = TRUE)
                 writeData(wb, 6, data.in.file, colNames = FALSE , startCol = startCol.10MVmax_Baseline)
@@ -218,7 +218,7 @@ rangeData <- function(numCols = 3) {
               }
               else{
                 data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                          sep = ";",
+                                          sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
                                           col.names = paste0("V",seq_len(50)),fill = TRUE)}
               writeData(wb, 8, data.in.file, colNames = FALSE, startCol = startCol.10MVmax_Post_TUG)
