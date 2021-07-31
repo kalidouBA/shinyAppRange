@@ -126,27 +126,29 @@ rangeData = function(numCols = 3) {
                                current = ">",    # Current bar character
                                clear = FALSE,    # If TRUE, clears the bar when finish
                                width = 100)
+
         k = 1
-        numFile = NA
-        beginCol = NA
-        data.in.file = NA
+        naChara = c("\\.", "", "\\s+", "N/A")
+        for (n in 1:20) {
+          naChara = c(naChara,paste0(rep(",",n),collapse = ""))
+        }
         for (elt in CDD) {
-          show_modal_spinner()
+          show_modal_spinner() # show the modal window
+
           ## TUG
-          if (identical(toupper(strsplit(elt,split = "/")[[1]][length.path+1]), "TUG")
+          if (identical(strsplit(elt,split = "/")[[1]][length.path+1], "TUG")
               & !is.na(strsplit(elt,split = "/")[[1]][length.path+2])
               & length(strsplit(elt,split = "/")[[1]]) == length.path+2) {
             if ( identical(strsplit(strsplit(elt,split = "/")[[1]][length.path+2]," ")[[1]][1], "ESSAI")) {
               pathDir.files = list.files(path = elt,pattern="*_Trial.csv")
-              data.in.file = read.table(paste0(elt,"/",pathDir.files),header=FALSE,
-                                        sep = ";",quote = "\"",
-                                        na.strings =" ", stringsAsFactors= F,
-                                        col.names = paste0("V",seq_len(50)),fill = TRUE)
-              data.in.file = data.frame(data.in.file)
+              data.in.file = data.frame(read.table(paste0(elt,"/",pathDir.files),header=FALSE,
+                                                   sep = "\"",quote = "\"",
+                                                   na.strings = naChara,
+                                                   stringsAsFactors= F,
+                                                   col.names = paste0("V",seq_len(50)),fill = TRUE))
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
-              numFile = 1
+              writeData(wb, 1, data.in.file, colNames = FALSE, startCol = startCol.20_TUG)
               startCol.20_TUG = startCol.20_TUG + ncol(data.in.file) + 2
-              beginCol = startCol.20_TUG
             }
             else{
               dir.dirs = list.dirs(path = elt)
@@ -154,53 +156,39 @@ rangeData = function(numCols = 3) {
               for(dir in dir.dirs){
                 if (length(strsplit(dir,split = "/")[[1]]) == length.path+3) {
                   pathDir.files = list.files(path = dir,pattern="*_Trial.csv")
-                  data.in.file = read.table(paste0(dir,"/",pathDir.files),header=FALSE,
-                                            sep = ";",quote = "\"",
-                                            na.strings =" ", stringsAsFactors= F,
-                                            col.names = paste0("V",seq_len(50)),fill = TRUE)
-                  data.in.file = data.frame(data.in.file)
+                  data.in.file = data.frame(read.table(paste0(dir,"/",pathDir.files),header=FALSE,
+                                                       sep = "\"",quote = "\"",
+                                                       na.strings = naChara,
+                                                       stringsAsFactors= F,
+                                                       col.names = paste0("V",seq_len(50)),fill = TRUE))
                   data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
-                  numFile = 2
+                  writeData(wb, 2, data.in.file, colNames = FALSE, startCol = startCol.metrics_20_TUG)
                   startCol.metrics_20_TUG = startCol.metrics_20_TUG + ncol(data.in.file) + 2
-                  beginCol = startCol.metrics_20_TUG
                 }
               }
             }
-            print(dim(data.in.file))
-            if(!is.na(numFile))
-              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
 
             ## SWAY
-          }
-          else if(identical(strsplit(elt,split = "/")[[1]][length.path+1], "SWAY")
+          }else if(identical(strsplit(elt,split = "/")[[1]][length.path+1], "SWAY")
                    & !is.na(strsplit(elt,split = "/")[[1]][length.path+2])
                    & length(strsplit(elt,split = "/")[[1]])>length.path+3) {
-            pathDir = paste0(global$datapath,"/",
-                             paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
-
+            pathDir = paste0(global$datapath,"/",paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
             pathDir.files = list.files(path = pathDir,pattern="*_Trial.csv")
-            data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                      sep = ";",quote = "\"",
-                                      na.strings =" ", stringsAsFactors= F,
-                                      col.names = paste0("V",seq_len(50)),fill = TRUE)
-            data.in.file = data.frame(data.in.file)
+            data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                 sep = "\"",quote = "\"",
+                                                 na.strings = naChara,
+                                                 stringsAsFactors= F,
+                                                 col.names = paste0("V",seq_len(50)),fill = TRUE))
             data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
             ifelse (identical(strsplit(elt,split = "/")[[1]][length.path+2], "Baseline"),
-                    { numFile = 3
+                    { writeData(wb, 3, data.in.file, colNames = FALSE, startCol = startCol.SWAY_Baseline)
                       startCol.SWAY_Baseline = startCol.SWAY_Baseline + ncol(data.in.file) + 2
-                      beginCol = startCol.SWAY_Baseline
                     },
-                    {
-                      numFile = 4
-                      startCol.SWAY_Post_TUG = startCol.SWAY_Post_TUG + ncol(data.in.file) + 2
-                      beginCol = startCol.SWAY_Post_TUG
-                      }
+                    {writeData(wb, 4, data.in.file, colNames = FALSE, startCol = startCol.SWAY_Post_TUG)
+                      startCol.SWAY_Post_TUG = startCol.SWAY_Post_TUG + ncol(data.in.file) +2
+                    }
             )
-            print(dim(data.in.file))
-            if(!is.na(numFile))
-              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
-
           }
 
           ##  WALK
@@ -212,55 +200,48 @@ rangeData = function(numCols = 3) {
 
             # PS
             if(identical(strsplit(pathDir,"/")[[1]][length.path+2],"PS")){
-              data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                        sep = ";",quote = "\"",
-                                        na.strings =" ", stringsAsFactors= F,
-                                        col.names = paste0("V",seq_len(50)),fill = TRUE)
-              data.in.file = data.frame(data.in.file)
+              data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                   sep = "\"",quote = "\"",
+                                                   na.strings = naChara,
+                                                   stringsAsFactors= F,
+                                                   col.names = paste0("V",seq_len(50)),fill = TRUE))
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               ifelse(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline"),
-                     {
-                       numFile = 5
+                     {writeData(wb, 5, data.in.file, colNames = FALSE, startCol = startCol.10MPS_Baseline)
                        startCol.10MPS_Baseline = startCol.10MPS_Baseline + ncol(data.in.file) + 2
-                       beginCol = startCol.10MPS_Baseline
                      },
-                     {
-                       numFile = 7
+                     {writeData(wb, 7, data.in.file, colNames = FALSE, startCol = startCol.10MPS_Post_TUG)
                        startCol.10MPS_Post_TUG = startCol.10MPS_Post_TUG + ncol(data.in.file) + 2
-                       beginCol = startCol.10MPS_Post_TUG
-                       })
+                     })
+
+
             }
 
             # Vmax
             else if(identical(strsplit(pathDir,"/")[[1]][length.path+2],"Vmax")){
               if(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline")){
 
-                data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                          sep = ";",quote = "\"",
-                                          na.strings =" ", stringsAsFactors= F,
-                                          col.names = paste0("V",seq_len(50)),fill = TRUE)
-                data.in.file = data.frame(data.in.file)
+                data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                     sep = "\"",quote = "\"",
+                                                     na.strings = naChara,
+                                                     stringsAsFactors= F,
+                                                     col.names = paste0("V",seq_len(50)),fill = TRUE))
                 data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
-                numFile = 6
+                writeData(wb, 6, data.in.file, colNames = FALSE , startCol = startCol.10MVmax_Baseline)
                 startCol.10MVmax_Baseline = startCol.10MVmax_Baseline + ncol(data.in.file) + 2
-                beginCol = startCol.10MVmax_Baseline
               }
               else{
-                data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
-                                          sep = ";",quote = "\"",
-                                          na.strings =" ", stringsAsFactors= F,
-                                          col.names = passte0("V",seq_len(50)),fill = TRUE)
-                data.in.file = data.frame(data.in.file)
-                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
-              }
-              numFile = 8
-              startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + ncol(data.in.file) + 2
-              beginCol = startCol.10MVmax_Post_TUG
-            }
-            print(dim(data.in.file))
-            if(!is.na(numFile))
-              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+                data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                     sep = "\"",quote = "\"",
+                                                     na.strings = naChara,
+                                                     stringsAsFactors= F,
+                                                     col.names = paste0("V",seq_len(50)),fill = TRUE))
 
+              }
+              data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              writeData(wb, 8, data.in.file, colNames = FALSE, startCol = startCol.10MVmax_Post_TUG)
+              startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + ncol(data.in.file) + 2
+            }
           }
 
           # Sets the progress bar to the current state
@@ -268,9 +249,10 @@ rangeData = function(numCols = 3) {
           end.time = Sys.time()
           time.taken = end.time - start.time
           print(time.taken)
-          pctg = paste(round(k/n_iter *100, 0), "% completed")
+          pctg <- paste(round(k/n_iter *100, 0), "% completed")
           k = k+1
         }
+
         openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
                                          imageHeight = 70,imageWidth = 70)
