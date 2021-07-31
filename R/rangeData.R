@@ -143,6 +143,7 @@ rangeData = function(numCols = 3) {
                                         sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
                                         col.names = paste0("V",seq_len(50)),fill = TRUE)
+              data.in.file = data.frame(data.in.file)
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               numFile = 1
               startCol.20_TUG = startCol.20_TUG + ncol(data.in.file) + 2
@@ -158,6 +159,7 @@ rangeData = function(numCols = 3) {
                                             sep = ";",quote = "\"",
                                             na.strings =" ", stringsAsFactors= F,
                                             col.names = paste0("V",seq_len(50)),fill = TRUE)
+                  data.in.file = data.frame(data.in.file)
                   data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
                   numFile = 2
                   startCol.metrics_20_TUG = startCol.metrics_20_TUG + ncol(data.in.file) + 2
@@ -173,13 +175,13 @@ rangeData = function(numCols = 3) {
                    & length(strsplit(elt,split = "/")[[1]])>length.path+3) {
             pathDir = paste0(global$datapath,"/",
                              paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
-            data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
 
             pathDir.files = list.files(path = pathDir,pattern="*_Trial.csv")
             data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                       sep = ";",quote = "\"",
                                       na.strings =" ", stringsAsFactors= F,
                                       col.names = paste0("V",seq_len(50)),fill = TRUE)
+            data.in.file = data.frame(data.in.file)
             data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
             ifelse (identical(strsplit(elt,split = "/")[[1]][length.path+2], "Baseline"),
                     { numFile = 3
@@ -207,6 +209,7 @@ rangeData = function(numCols = 3) {
                                         sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
                                         col.names = paste0("V",seq_len(50)),fill = TRUE)
+              data.in.file = data.frame(data.in.file)
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               ifelse(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline"),
                      {
@@ -229,6 +232,7 @@ rangeData = function(numCols = 3) {
                                           sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
                                           col.names = paste0("V",seq_len(50)),fill = TRUE)
+                data.in.file = data.frame(data.in.file)
                 data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
                 numFile = 6
                 startCol.10MVmax_Baseline = startCol.10MVmax_Baseline + ncol(data.in.file) + 2
@@ -239,6 +243,7 @@ rangeData = function(numCols = 3) {
                                           sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
                                           col.names = paste0("V",seq_len(50)),fill = TRUE)
+                data.in.file = data.frame(data.in.file)
                 data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               }
               numFile = 8
