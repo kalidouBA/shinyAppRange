@@ -246,7 +246,7 @@ rangeData = function(numCols = 3) {
             }
           }
           print(numFile)
-          writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+          #writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
           pb$tick()
@@ -256,7 +256,7 @@ rangeData = function(numCols = 3) {
           pctg = paste(round(k/n_iter *100, 0), "% completed")
           k = k+1
         }
-        openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
+        #openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
                                          imageHeight = 70,imageWidth = 70)
         else shinyalert("Vérifier le contenu du fichier", "Le fichier excel est situé dans le dossier de données", type = "warning")
