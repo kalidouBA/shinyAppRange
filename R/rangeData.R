@@ -12,10 +12,10 @@ require(shinyalert)
 require(devtools)
 require(roxygen2)
 
-rangeData <- function(numCols = 3) {
+rangeData = function(numCols = 3) {
 
-  volumes <- c('R Installation'=R.home())
-  viewer <- shiny::dialogViewer("test", width = 1200, height = 1100)
+  volumes = c('R Installation'=R.home())
+  viewer = shiny::dialogViewer("test", width = 1200, height = 1100)
   shiny::runGadget(shiny::shinyApp(ui = dashboardPage(
     dashboardHeader(title = "Rangement"),
     dashboardSidebar(),
@@ -58,11 +58,11 @@ rangeData <- function(numCols = 3) {
       filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
     )
 
-    global <- reactiveValues(datapath = getwd())
+    global = reactiveValues(datapath = getwd())
 
-    dir <- reactive(input$dir)
+    dir = reactive(input$dir)
 
-    output$dir <- renderText({
+    output$dir = renderText({
       global$datapath
     })
 
@@ -72,13 +72,13 @@ rangeData <- function(numCols = 3) {
                  },
                  handlerExpr = {
                    if (!"path" %in% names(dir())) return()
-                   home <- normalizePath("/")
-                   global$datapath <-
+                   home = normalizePath("/")
+                   global$datapath =
                      file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
                  })
 
 
-    SaveRData <- reactive({
+    SaveRData = reactive({
       if(!(is.null(input$save) && is.null(input$file_name))){
         file_name = paste0(global$datapath,"/",input$file_name,".xlsx")
 
@@ -116,10 +116,10 @@ rangeData <- function(numCols = 3) {
         startCol.10MVmax_Post_TUG = 1
 
 
-        n_iter <- length(CDD) # Number of iterations of the loop
+        n_iter = length(CDD)
 
         # Initializes the progress bar
-        pb <- progress_bar$new(format = "(:spin) [:bar] :percent [Elapsed time: :elapsedfull || Estimated time remaining: :eta]",
+        pb = progress_bar$new(format = "(:spin) [:bar] :percent [Elapsed time: :elapsedfull || Estimated time remaining: :eta]",
                                total = n_iter,
                                complete = "=",   # Completion bar character
                                incomplete = "-", # Incomplete bar character
@@ -127,8 +127,10 @@ rangeData <- function(numCols = 3) {
                                clear = FALSE,    # If TRUE, clears the bar when finish
                                width = 100)
         k = 1
+        numFile = NA
+        beginCol = NA
         for (elt in CDD) {
-          show_modal_spinner() # show the modal window
+          show_modal_spinner()
 
           ## TUG
           if (identical(toupper(strsplit(elt,split = "/")[[1]][length.path+1]), "TUG")
@@ -140,9 +142,10 @@ rangeData <- function(numCols = 3) {
                                         sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
                                         col.names = paste0("V",seq_len(50)),fill = TRUE)
-
-              writeData(wb, 1, data.in.file, colNames = FALSE, startCol = startCol.20_TUG)
-              startCol.20_TUG = startCol.20_TUG + 9
+              data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              numFile = 1
+              startCol.20_TUG = startCol.20_TUG + ncol(data.in.file) + 2
+              beginCol = startCol.20_TUG
             }
             else{
               dir.dirs = list.dirs(path = elt)
@@ -154,8 +157,10 @@ rangeData <- function(numCols = 3) {
                                             sep = ";",quote = "\"",
                                             na.strings =" ", stringsAsFactors= F,
                                             col.names = paste0("V",seq_len(50)),fill = TRUE)
-                  writeData(wb, 2, data.in.file, colNames = FALSE, startCol = startCol.metrics_20_TUG)
-                  startCol.metrics_20_TUG = startCol.metrics_20_TUG + 13
+                  data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                  numFile = 2
+                  startCol.metrics_20_TUG = startCol.metrics_20_TUG + ncol(data.in.file) + 2
+                  beginCol = startCol.metrics_20_TUG
                 }
               }
             }
@@ -165,19 +170,26 @@ rangeData <- function(numCols = 3) {
           }else if(identical(strsplit(elt,split = "/")[[1]][length.path+1], "SWAY")
                    & !is.na(strsplit(elt,split = "/")[[1]][length.path+2])
                    & length(strsplit(elt,split = "/")[[1]])>length.path+3) {
-            pathDir = paste0(global$datapath,"/",paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
+            pathDir = paste0(global$datapath,"/",
+                             paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
+            data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+
             pathDir.files = list.files(path = pathDir,pattern="*_Trial.csv")
             data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                       sep = ";",quote = "\"",
                                       na.strings =" ", stringsAsFactors= F,
                                       col.names = paste0("V",seq_len(50)),fill = TRUE)
-
+            data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
             ifelse (identical(strsplit(elt,split = "/")[[1]][length.path+2], "Baseline"),
-                    { writeData(wb, 3, data.in.file, colNames = FALSE, startCol = startCol.SWAY_Baseline)
-                      startCol.SWAY_Baseline = startCol.SWAY_Baseline + 8
+                    { numFile = 3
+                      startCol.SWAY_Baseline = startCol.SWAY_Baseline + ncol(data.in.file) + 2
+                      beginCol = startCol.SWAY_Baseline
                     },
-                    {writeData(wb, 4, data.in.file, colNames = FALSE, startCol = startCol.SWAY_Post_TUG)
-                      startCol.SWAY_Post_TUG = startCol.SWAY_Post_TUG + 8}
+                    {
+                      numFile = 4
+                      startCol.SWAY_Post_TUG = startCol.SWAY_Post_TUG + ncol(data.in.file) + 2
+                      beginCol = startCol.SWAY_Post_TUG
+                      }
             )
           }
 
@@ -194,15 +206,18 @@ rangeData <- function(numCols = 3) {
                                         sep = ";",quote = "\"",
                                         na.strings =" ", stringsAsFactors= F,
                                         col.names = paste0("V",seq_len(50)),fill = TRUE)
-
+              data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               ifelse(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline"),
-                     {writeData(wb, 5, data.in.file, colNames = FALSE, startCol = startCol.10MPS_Baseline)
-                       startCol.10MPS_Baseline = startCol.10MPS_Baseline + 19
+                     {
+                       numFile = 5
+                       startCol.10MPS_Baseline = startCol.10MPS_Baseline + ncol(data.in.file) + 2
+                       beginCol = startCol.10MPS_Baseline
                      },
-                     {writeData(wb, 7, data.in.file, colNames = FALSE, startCol = startCol.10MPS_Post_TUG)
-                       startCol.10MPS_Post_TUG = startCol.10MPS_Post_TUG + 19})
-
-
+                     {
+                       numFile = 7
+                       startCol.10MPS_Post_TUG = startCol.10MPS_Post_TUG + ncol(data.in.file) + 2
+                       beginCol = startCol.10MPS_Post_TUG
+                       })
             }
 
             # Vmax
@@ -213,32 +228,39 @@ rangeData <- function(numCols = 3) {
                                           sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
                                           col.names = paste0("V",seq_len(50)),fill = TRUE)
-                writeData(wb, 6, data.in.file, colNames = FALSE , startCol = startCol.10MVmax_Baseline)
-                startCol.10MVmax_Baseline = startCol.10MVmax_Baseline + 18
+                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                numFile = 6
+                startCol.10MVmax_Baseline = startCol.10MVmax_Baseline + ncol(data.in.file) + 2
+                beginCol = startCol.10MVmax_Baseline
               }
               else{
                 data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                           sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
-                                          col.names = paste0("V",seq_len(50)),fill = TRUE)}
-              writeData(wb, 8, data.in.file, colNames = FALSE, startCol = startCol.10MVmax_Post_TUG)
-              startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + 17
+                                          col.names = paste0("V",seq_len(50)),fill = TRUE)
+                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              }
+              numFile = 8
+              startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + ncol(data.in.file) + 2
+              beginCol = startCol.10MVmax_Post_TUG
             }
           }
+          print(numFile)
+          #writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
           pb$tick()
           end.time = Sys.time()
           time.taken = end.time - start.time
           print(time.taken)
-          pctg <- paste(round(k/n_iter *100, 0), "% completed")
+          pctg = paste(round(k/n_iter *100, 0), "% completed")
           k = k+1
         }
         openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
                                          imageHeight = 70,imageWidth = 70)
         else shinyalert("Vérifier le contenu du fichier", "Le fichier excel est situé dans le dossier de données", type = "warning")
-        remove_modal_spinner() # remove it when done
+        remove_modal_spinner()
       }
       if(k == 1)
         shinyalert("Sauvegarde échouée!", "Le fichier excel n'a pas pu etre créé", type = "error")
