@@ -129,6 +129,7 @@ rangeData = function(numCols = 3) {
         k = 1
         numFile = NA
         beginCol = NA
+        data.in.file = NA
         for (elt in CDD) {
           show_modal_spinner()
 
@@ -254,7 +255,8 @@ rangeData = function(numCols = 3) {
           time.taken = end.time - start.time
           print(time.taken)
           pctg = paste(round(k/n_iter *100, 0), "% completed")
-          k = k+1
+          k = k+
+          print(k)
         }
         openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
