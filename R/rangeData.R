@@ -251,8 +251,8 @@ rangeData = function(numCols = 3) {
               beginCol = startCol.10MVmax_Post_TUG
             }
           }
-          print(numFile)
-          #writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+          print(dim(data.in.file))
+          writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
           pb$tick()
@@ -260,8 +260,7 @@ rangeData = function(numCols = 3) {
           time.taken = end.time - start.time
           print(time.taken)
           pctg = paste(round(k/n_iter *100, 0), "% completed")
-          k = k+
-          print(k)
+          k = k+1
         }
         openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
