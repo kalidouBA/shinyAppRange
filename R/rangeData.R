@@ -120,13 +120,12 @@ rangeData = function(numCols = 3) {
 
         # Initializes the progress bar
         pb = progress_bar$new(format = "(:spin) [:bar] :percent [Elapsed time: :elapsedfull || Estimated time remaining: :eta]",
-                               total = n_iter,
-                               complete = "=",   # Completion bar character
-                               incomplete = "-", # Incomplete bar character
-                               current = ">",    # Current bar character
-                               clear = FALSE,    # If TRUE, clears the bar when finish
-                               width = 100)
-
+                              total = n_iter,
+                              complete = "=",   # Completion bar character
+                              incomplete = "-", # Incomplete bar character
+                              current = ">",    # Current bar character
+                              clear = FALSE,    # If TRUE, clears the bar when finish
+                              width = 100)
         k = 1
         naChara = c("\\.", "", "\\s+", "N/A")
         for (n in 1:20) {
@@ -252,7 +251,6 @@ rangeData = function(numCols = 3) {
           pctg <- paste(round(k/n_iter *100, 0), "% completed")
           k = k+1
         }
-
         openxlsx::saveWorkbook(wb, file = file_name,overwrite = TRUE)
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
                                          imageHeight = 70,imageWidth = 70)
@@ -262,7 +260,6 @@ rangeData = function(numCols = 3) {
       if(k == 1)
         shinyalert("Sauvegarde échouée!", "Le fichier excel n'a pas pu etre créé", type = "error")
     })
-
   }), viewer = viewer,
   stopOnCancel = FALSE)
 }
