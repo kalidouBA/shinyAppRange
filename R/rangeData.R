@@ -132,7 +132,6 @@ rangeData = function(numCols = 3) {
         data.in.file = NA
         for (elt in CDD) {
           show_modal_spinner()
-
           ## TUG
           if (identical(toupper(strsplit(elt,split = "/")[[1]][length.path+1]), "TUG")
               & !is.na(strsplit(elt,split = "/")[[1]][length.path+2])
@@ -167,10 +166,14 @@ rangeData = function(numCols = 3) {
                 }
               }
             }
+            print(dim(data.in.file))
+            if(!is.na(numFile))
+              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
 
             ## SWAY
-          }else if(identical(strsplit(elt,split = "/")[[1]][length.path+1], "SWAY")
+          }
+          else if(identical(strsplit(elt,split = "/")[[1]][length.path+1], "SWAY")
                    & !is.na(strsplit(elt,split = "/")[[1]][length.path+2])
                    & length(strsplit(elt,split = "/")[[1]])>length.path+3) {
             pathDir = paste0(global$datapath,"/",
@@ -194,6 +197,10 @@ rangeData = function(numCols = 3) {
                       beginCol = startCol.SWAY_Post_TUG
                       }
             )
+            print(dim(data.in.file))
+            if(!is.na(numFile))
+              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+
           }
 
           ##  WALK
@@ -250,10 +257,11 @@ rangeData = function(numCols = 3) {
               startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + ncol(data.in.file) + 2
               beginCol = startCol.10MVmax_Post_TUG
             }
+            print(dim(data.in.file))
+            if(!is.na(numFile))
+              writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+
           }
-          print(dim(data.in.file))
-          if(!is.na(numFile))
-          writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
           pb$tick()
