@@ -245,7 +245,8 @@ rangeData = function(numCols = 3) {
               beginCol = startCol.10MVmax_Post_TUG
             }
           }
-          writeData(wb, numFile, data.in.file, colNames = FALSE , startCol = beginCol)
+          print(numFile)
+          writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
           pb$tick()
@@ -259,7 +260,7 @@ rangeData = function(numCols = 3) {
         if(k == length(CDD)+1)shinyalert("Sauvegarde réussie!", "Le fichier excel est situé dans le dossier de données", type = "success",imageUrl = "https://jeroen.github.io/images/banana.gif",
                                          imageHeight = 70,imageWidth = 70)
         else shinyalert("Vérifier le contenu du fichier", "Le fichier excel est situé dans le dossier de données", type = "warning")
-        remove_modal_spinner() # remove it when done
+        remove_modal_spinner()
       }
       if(k == 1)
         shinyalert("Sauvegarde échouée!", "Le fichier excel n'a pas pu etre créé", type = "error")
