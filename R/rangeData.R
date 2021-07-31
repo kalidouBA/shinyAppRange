@@ -127,9 +127,9 @@ rangeData = function(numCols = 3) {
                               clear = FALSE,    # If TRUE, clears the bar when finish
                               width = 100)
         k = 1
-        naChara = c("\\.", "", "\\s+", "N/A")
+        naChar = c("\\.", "", "\\s+", "N/A")
         for (n in 1:20) {
-          naChara = c(naChara,paste0(rep(",",n),collapse = ""))
+          naChar = c(naChar,paste0(rep(",",n),collapse = ""))
         }
         for (elt in CDD) {
           show_modal_spinner() # show the modal window
@@ -142,10 +142,18 @@ rangeData = function(numCols = 3) {
               pathDir.files = list.files(path = elt,pattern="*_Trial.csv")
               data.in.file = data.frame(read.table(paste0(elt,"/",pathDir.files),header=FALSE,
                                                    sep = "\"",quote = "\"",
-                                                   na.strings = naChara,
+                                                   na.strings = naChar,
                                                    stringsAsFactors= F,
                                                    col.names = paste0("V",seq_len(50)),fill = TRUE))
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              if (is.null(dim(data.in.file))){
+                data.in.file = data.frame(read.table(paste0(elt,"/",pathDir.files),header=FALSE,
+                                                     sep = ";",quote = "\"",
+                                                     na.strings = naChar,
+                                                     stringsAsFactors= F,
+                                                     col.names = paste0("V",seq_len(50)),fill = TRUE))
+                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              }
               writeData(wb, 1, data.in.file, colNames = FALSE, startCol = startCol.20_TUG)
               startCol.20_TUG = startCol.20_TUG + ncol(data.in.file) + 2
             }
@@ -157,10 +165,18 @@ rangeData = function(numCols = 3) {
                   pathDir.files = list.files(path = dir,pattern="*_Trial.csv")
                   data.in.file = data.frame(read.table(paste0(dir,"/",pathDir.files),header=FALSE,
                                                        sep = "\"",quote = "\"",
-                                                       na.strings = naChara,
+                                                       na.strings = naChar,
                                                        stringsAsFactors= F,
                                                        col.names = paste0("V",seq_len(50)),fill = TRUE))
                   data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                  if (is.null(dim(data.in.file))){
+                    data.in.file = data.frame(read.table(paste0(dir,"/",pathDir.files),header=FALSE,
+                                                         sep = ";",quote = "\"",
+                                                         na.strings = naChar,
+                                                         stringsAsFactors= F,
+                                                         col.names = paste0("V",seq_len(50)),fill = TRUE))
+                    data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                  }
                   writeData(wb, 2, data.in.file, colNames = FALSE, startCol = startCol.metrics_20_TUG)
                   startCol.metrics_20_TUG = startCol.metrics_20_TUG + ncol(data.in.file) + 2
                 }
@@ -174,12 +190,22 @@ rangeData = function(numCols = 3) {
                    & length(strsplit(elt,split = "/")[[1]])>length.path+3) {
             pathDir = paste0(global$datapath,"/",paste(strsplit(elt,split = "/")[[1]][(length.path+1):(length.path+3)],collapse = "/"))
             pathDir.files = list.files(path = pathDir,pattern="*_Trial.csv")
+
             data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                                  sep = "\"",quote = "\"",
-                                                 na.strings = naChara,
+                                                 na.strings = naChar,
                                                  stringsAsFactors= F,
                                                  col.names = paste0("V",seq_len(50)),fill = TRUE))
             data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+
+            if (is.null(dim(data.in.file))){
+              data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                   sep = ";",quote = "\"",
+                                                   na.strings = naChar,
+                                                   stringsAsFactors= F,
+                                                   col.names = paste0("V",seq_len(50)),fill = TRUE))
+              data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+            }
             ifelse (identical(strsplit(elt,split = "/")[[1]][length.path+2], "Baseline"),
                     { writeData(wb, 3, data.in.file, colNames = FALSE, startCol = startCol.SWAY_Baseline)
                       startCol.SWAY_Baseline = startCol.SWAY_Baseline + ncol(data.in.file) + 2
@@ -201,10 +227,18 @@ rangeData = function(numCols = 3) {
             if(identical(strsplit(pathDir,"/")[[1]][length.path+2],"PS")){
               data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                                    sep = "\"",quote = "\"",
-                                                   na.strings = naChara,
+                                                   na.strings = naChar,
                                                    stringsAsFactors= F,
                                                    col.names = paste0("V",seq_len(50)),fill = TRUE))
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              if (is.null(dim(data.in.file))){
+                data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                     sep = ";",quote = "\"",
+                                                     na.strings = naChar,
+                                                     stringsAsFactors= F,
+                                                     col.names = paste0("V",seq_len(50)),fill = TRUE))
+                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              }
               ifelse(identical(strsplit(elt,split = "/")[[1]][length.path+3], "Baseline"),
                      {writeData(wb, 5, data.in.file, colNames = FALSE, startCol = startCol.10MPS_Baseline)
                        startCol.10MPS_Baseline = startCol.10MPS_Baseline + ncol(data.in.file) + 2
@@ -222,22 +256,38 @@ rangeData = function(numCols = 3) {
 
                 data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                                      sep = "\"",quote = "\"",
-                                                     na.strings = naChara,
+                                                     na.strings = naChar,
                                                      stringsAsFactors= F,
                                                      col.names = paste0("V",seq_len(50)),fill = TRUE))
                 data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                if (is.null(dim(data.in.file))){
+                  data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                       sep = ";",quote = "\"",
+                                                       na.strings = naChar,
+                                                       stringsAsFactors= F,
+                                                       col.names = paste0("V",seq_len(50)),fill = TRUE))
+                  data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+                }
                 writeData(wb, 6, data.in.file, colNames = FALSE , startCol = startCol.10MVmax_Baseline)
                 startCol.10MVmax_Baseline = startCol.10MVmax_Baseline + ncol(data.in.file) + 2
               }
               else{
                 data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                                      sep = "\"",quote = "\"",
-                                                     na.strings = naChara,
+                                                     na.strings = naChar,
                                                      stringsAsFactors= F,
                                                      col.names = paste0("V",seq_len(50)),fill = TRUE))
 
               }
               data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              if (is.null(dim(data.in.file))){
+                data.in.file = data.frame(read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
+                                                     sep = ";",quote = "\"",
+                                                     na.strings = naChar,
+                                                     stringsAsFactors= F,
+                                                     col.names = paste0("V",seq_len(50)),fill = TRUE))
+                data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
+              }
               writeData(wb, 8, data.in.file, colNames = FALSE, startCol = startCol.10MVmax_Post_TUG)
               startCol.10MVmax_Post_TUG = startCol.10MVmax_Post_TUG + ncol(data.in.file) + 2
             }
