@@ -242,7 +242,7 @@ rangeData = function(numCols = 3) {
                 data.in.file = read.table(paste0(pathDir,"/",pathDir.files),header=FALSE,
                                           sep = ";",quote = "\"",
                                           na.strings =" ", stringsAsFactors= F,
-                                          col.names = paste0("V",seq_len(50)),fill = TRUE)
+                                          col.names = passte0("V",seq_len(50)),fill = TRUE)
                 data.in.file = data.frame(data.in.file)
                 data.in.file = data.in.file[,colSums(is.na(data.in.file))<nrow(data.in.file)]
               }
@@ -252,6 +252,7 @@ rangeData = function(numCols = 3) {
             }
           }
           print(dim(data.in.file))
+          if(!is.na(numFile))
           writeData(wb,numFile, data.in.file, colNames = FALSE , startCol = beginCol)
 
           # Sets the progress bar to the current state
